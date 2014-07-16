@@ -500,5 +500,128 @@ public class VersionInfoTest {
 		v = new VersionInfo(0, 0, 0, null, 0);
 		assertEquals("0.0", v.toString());
 	}
+	
+	@Test
+	public void testUpdateMajor() {
+		VersionInfo v;
+		
+		v = new VersionInfo(1, 2, 3, "qualifier", 5);
+		v.updateMajor(1);
+		assertFalse(v.isSnapshot());
+		assertEquals(2, v.getMajor());
+		assertEquals(0, v.getMinor());
+		assertEquals(0, v.getRevision());
+		assertEquals(0, v.getBuild());
+		assertEquals("qualifier", v.getQualifier());
+		
+		v = new VersionInfo(1, 2, 3, null, 5);
+		v.updateMajor(2);
+		assertFalse(v.isSnapshot());
+		assertEquals(3, v.getMajor());
+		assertEquals(0, v.getMinor());
+		assertEquals(0, v.getRevision());
+		assertEquals(0, v.getBuild());
+		assertNull(v.getQualifier());		
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testUpdateMajorFail() {
+		VersionInfo v;
+		
+		v = new VersionInfo(1, 2, 3, "qualifier", 5);
+		v.updateMajor(-1);
+	}
 
+	@Test
+	public void testUpdateMinor() {
+		VersionInfo v;
+		
+		v = new VersionInfo(1, 2, 3, "qualifier", 5);
+		v.updateMinor(1);
+		assertFalse(v.isSnapshot());
+		assertEquals(1, v.getMajor());
+		assertEquals(3, v.getMinor());
+		assertEquals(0, v.getRevision());
+		assertEquals(0, v.getBuild());
+		assertEquals("qualifier", v.getQualifier());
+		
+		v = new VersionInfo(1, 2, 3, null, 5);
+		v.updateMinor(2);
+		assertFalse(v.isSnapshot());
+		assertEquals(1, v.getMajor());
+		assertEquals(4, v.getMinor());
+		assertEquals(0, v.getRevision());
+		assertEquals(0, v.getBuild());
+		assertNull(v.getQualifier());		
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testUpdateMinorFail() {
+		VersionInfo v;
+		
+		v = new VersionInfo(1, 2, 3, "qualifier", 5);
+		v.updateMinor(-1);
+	}
+	
+	@Test
+	public void testUpdateRevision() {
+		VersionInfo v;
+		
+		v = new VersionInfo(1, 2, 3, "qualifier", 5);
+		v.updateRevision(1);
+		assertFalse(v.isSnapshot());
+		assertEquals(1, v.getMajor());
+		assertEquals(2, v.getMinor());
+		assertEquals(4, v.getRevision());
+		assertEquals(0, v.getBuild());
+		assertEquals("qualifier", v.getQualifier());
+		
+		v = new VersionInfo(1, 2, 3, null, 5);
+		v.updateRevision(2);
+		assertFalse(v.isSnapshot());
+		assertEquals(1, v.getMajor());
+		assertEquals(2, v.getMinor());
+		assertEquals(5, v.getRevision());
+		assertEquals(0, v.getBuild());
+		assertNull(v.getQualifier());		
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testUpdateRevisionFail() {
+		VersionInfo v;
+		
+		v = new VersionInfo(1, 2, 3, "qualifier", 5);
+		v.updateRevision(-1);
+	}
+	
+	@Test
+	public void testUpdateBuild() {
+		VersionInfo v;
+		
+		v = new VersionInfo(1, 2, 3, "qualifier", 5);
+		v.updateBuild(1);
+		assertFalse(v.isSnapshot());
+		assertEquals(1, v.getMajor());
+		assertEquals(2, v.getMinor());
+		assertEquals(3, v.getRevision());
+		assertEquals(6, v.getBuild());
+		assertEquals("qualifier", v.getQualifier());
+		
+		v = new VersionInfo(1, 2, 3, null, 5);
+		v.updateBuild(2);
+		assertFalse(v.isSnapshot());
+		assertEquals(1, v.getMajor());
+		assertEquals(2, v.getMinor());
+		assertEquals(3, v.getRevision());
+		assertEquals(7, v.getBuild());
+		assertNull(v.getQualifier());		
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testUpdateBuildFail() {
+		VersionInfo v;
+		
+		v = new VersionInfo(1, 2, 3, "qualifier", 5);
+		v.updateBuild(-1);
+	}	
 }

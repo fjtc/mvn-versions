@@ -69,6 +69,11 @@ public class VersionInfo {
 		return major;
 	}
 
+	/**
+	 * Sets the major value.
+	 * 
+	 * @param major The new value. It cannot be negative.
+	 */
 	public void setMajor(int major) {
 		if (major < 0) {
 			throw new IllegalArgumentException("Major cannot be negative.");
@@ -76,10 +81,20 @@ public class VersionInfo {
 		this.major = major;
 	}
 
+	/**
+	 * Returns the minor. 
+	 * 
+	 * @return The minor value.
+	 */	
 	public int getMinor() {
 		return minor;
 	}
 
+	/**
+	 * Sets the minor value.
+	 * 
+	 * @param minor The new value. It cannot be negative.
+	 */
 	public void setMinor(int minor) {
 		if (minor < 0) {
 			throw new IllegalArgumentException("Minor cannot be negative.");
@@ -87,10 +102,20 @@ public class VersionInfo {
 		this.minor = minor;
 	}
 
+	/**
+	 * Returns the revision. 
+	 * 
+	 * @return The revision value.
+	 */	
 	public int getRevision() {
 		return revision;
 	}
 
+	/**
+	 * Sets the revision value.
+	 * 
+	 * @param revision The new value. It cannot be negative.
+	 */
 	public void setRevision(int revision) {
 		if (revision < 0) {
 			throw new IllegalArgumentException("Revision cannot be negative.");
@@ -118,6 +143,11 @@ public class VersionInfo {
 		}
 	}
 	
+	/**
+	 * Verifies if this version is a snapshot or not.
+	 * 
+	 * @return true if it is a snapshot or false otherwise.
+	 */
 	public boolean isSnapshot(){
 		if (qualifier == null) {
 			return false;
@@ -126,10 +156,21 @@ public class VersionInfo {
 		}		
 	}
 	
+	/**
+	 * Returns the qualifier.
+	 * 
+	 * @return The qualifier string or null if it is not set.
+	 */
 	public String getQualifier() {
 		return qualifier;
 	}
 
+	/**
+	 * Sets the qualifier. It is important to notice that the qualifier
+	 * must be a non empty string with no blanks and no '-' characters.
+	 * 
+	 * @param qualifier The qualifier or null if this version has no qualifiers.
+	 */
 	public void setQualifier(String qualifier) {
 		
 		if (qualifier != null) {
@@ -141,10 +182,20 @@ public class VersionInfo {
 		this.qualifier = qualifier;
 	}
 
+	/**
+	 * Returns the build. 
+	 * 
+	 * @return The build value.
+	 */		
 	public int getBuild() {
 		return build;
 	}
 
+	/**
+	 * Sets the build value.
+	 * 
+	 * @param build  The new value. It cannot be negative.
+	 */	
 	public void setBuild(int build) {
 		if (build < 0) {
 			throw new IllegalArgumentException("Build cannot be negative.");
@@ -153,7 +204,16 @@ public class VersionInfo {
 	}
 
 	/**
-	 * Compares this version with another.
+	 * Compares this version with another. The comparison follows the following criteria:
+	 * 
+	 *   - Compare majors, the greater one is newer;
+	 *   - Compare minors, the greater one is newer;
+	 *   - Compare revisions, the greater one is newer;
+	 *   - Compare the qualifiers. The newer version is defined according to those rules:
+	 *     - No qualifier;
+	 *     - SNAPSHOT;
+	 *     - Lexicographic comparison;
+	 *   - Compare build, the greater one is newer;
 	 * 
 	 * @param v The other version.
 	 * @return 0 if the versions are the same, a positive value if this version is 
@@ -195,6 +255,13 @@ public class VersionInfo {
 		return 0;
 	}
 
+	/**
+	 * Compare the qualifiers according to the rules specified by Maven.
+	 * 
+	 * @param v The other version.
+	 * @return 0 if the versions are the same, a positive value if this version is 
+	 * newer or a negative value if this version is older.
+	 */
 	private int compareQualifiers(VersionInfo v) {
 		int delta;
 		
@@ -227,9 +294,16 @@ public class VersionInfo {
 	}
 
 	/**
-	 * Converts this version to string.
+	 * Converts this version to string. The version will have the following format:
+	 * 
+	 *   - major.minor[.revision][-qualifier][-build]
+	 * 
+	 * The revision may be ommited if it is zero, the qualifier is ommited when it is not
+	 * present and the build may be ommited if it is zero.
 	 * 
 	 * @return The string representation of this version.
+	 * @note In order to avoid problems with a known issue with maven, the build value will be
+	 * written with 3 decimal places. 
 	 */
 	@Override
 	public String toString() {
@@ -251,5 +325,68 @@ public class VersionInfo {
 			sb.append(String.format("%1$03d", build));
 		}
 		return sb.toString();
+	}	
+	
+	
+	/**
+	 * Updates the major value. It sets minor, revision and build to 0.
+	 * 
+	 * @param v The version to be incremented.
+	 * @param increase The amount to be increased. It must be greater than zero.
+	 */
+	public void updateMajor(int inc) {
+		
+		if (inc <= 0) {
+			throw new IllegalArgumentException("The increment must be greater than 0.");
+		}
+		major += inc;
+		minor = 0;
+		revision = 0;
+		build = 0;
+	}
+	
+	/**
+	 * Updates the minor value. It sets revision and build to 0.
+	 * 
+	 * @param v The version to be incremented.
+	 * @param increase The amount to be increased. It must be greater than zero.
+	 */
+	public void updateMinor(int inc) {
+		
+		if (inc <= 0) {
+			throw new IllegalArgumentException("The increment must be greater than 0.");
+		}
+		minor += inc;
+		revision = 0;
+		build = 0;
+	}
+	
+	/**
+	 * Updates the revision value. It sets build to 0.
+	 * 
+	 * @param v The version to be incremented.
+	 * @param increase The amount to be increased. It must be greater than zero.
+	 */
+	public void updateRevision(int inc) {
+		
+		if (inc <= 0) {
+			throw new IllegalArgumentException("The increment must be greater than 0.");
+		}
+		revision += inc;
+		build = 0;
+	}	
+	
+	/**
+	 * Updates the revision value. It sets build to 0.
+	 * 
+	 * @param v The version to be incremented.
+	 * @param increase The amount to be increased. It must be greater than zero.
+	 */
+	public void updateBuild(int inc) {
+		
+		if (inc <= 0) {
+			throw new IllegalArgumentException("The increment must be greater than 0.");
+		}
+		build += inc;
 	}	
 }
