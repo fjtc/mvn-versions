@@ -117,8 +117,8 @@ public class VersionInfoTest {
 	public void testSetMajorNegative() {
 		VersionInfo v;
 		
-		v = new VersionInfo(-1, 1, 1, "qualifier", 1);
-		assertNull(v);
+		v = new VersionInfo();
+		v.setMajor(-1);
 	}
 
 	@Test
@@ -154,8 +154,8 @@ public class VersionInfoTest {
 	public void testSetMinorNegative() {
 		VersionInfo v;
 		
-		v = new VersionInfo(1, -1, 1, "qualifier", 1);
-		assertNull(v);
+		v = new VersionInfo();
+		v.setMinor(-1);
 	}
 
 	@Test
@@ -191,8 +191,8 @@ public class VersionInfoTest {
 	public void testSetRevision() {
 		VersionInfo v;
 		
-		v = new VersionInfo(1, 1, -1, "qualifier", 1);
-		assertNull(v);
+		v = new VersionInfo();
+		v.setRevision(-1);
 	}
 
 	@Test
@@ -261,29 +261,13 @@ public class VersionInfoTest {
 		assertEquals(4, v.getBuild());
 		assertEquals("other", v.getQualifier());
 		
-		v.setQualifier(" other");
+		v.setQualifier("other1");
 		assertFalse(v.isSnapshot());
 		assertEquals(1, v.getMajor());
 		assertEquals(2, v.getMinor());
 		assertEquals(3, v.getRevision());
 		assertEquals(4, v.getBuild());
-		assertEquals("other", v.getQualifier());
-		
-		v.setQualifier("other");
-		assertFalse(v.isSnapshot());
-		assertEquals(1, v.getMajor());
-		assertEquals(2, v.getMinor());
-		assertEquals(3, v.getRevision());
-		assertEquals(4, v.getBuild());
-		assertEquals("other", v.getQualifier());		
-		
-		v.setQualifier(" other ");
-		assertFalse(v.isSnapshot());
-		assertEquals(1, v.getMajor());
-		assertEquals(2, v.getMinor());
-		assertEquals(3, v.getRevision());
-		assertEquals(4, v.getBuild());
-		assertEquals("other", v.getQualifier());
+		assertEquals("other1", v.getQualifier());
 		
 		v.setQualifier(null);
 		assertFalse(v.isSnapshot());
@@ -292,15 +276,55 @@ public class VersionInfoTest {
 		assertEquals(3, v.getRevision());
 		assertEquals(4, v.getBuild());
 		assertNull(v.getQualifier());		
-		
-		v.setQualifier("");
-		assertFalse(v.isSnapshot());
-		assertEquals(1, v.getMajor());
-		assertEquals(2, v.getMinor());
-		assertEquals(3, v.getRevision());
-		assertEquals(4, v.getBuild());
-		assertNull(v.getQualifier());		
 	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testGetSetQualifierFailEmpty() {
+		VersionInfo v;
+		
+		v = new VersionInfo();
+		v.setQualifier("");
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testGetSetQualifierFailSpaces() {
+		VersionInfo v;
+		
+		v = new VersionInfo();
+		v.setQualifier(" ");
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testGetSetQualifierFailWithSpacesLeft() {
+		VersionInfo v;
+		
+		v = new VersionInfo();
+		v.setQualifier(" qualifier");
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void testGetSetQualifierFailWithSpacesRight() {
+		VersionInfo v;
+		
+		v = new VersionInfo();
+		v.setQualifier("qualifier ");
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testGetSetQualifierFailWithSpacesMiddle() {
+		VersionInfo v;
+		
+		v = new VersionInfo();
+		v.setQualifier("qualifie r");
+	}	
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testGetSetQualifierFailWithMinus() {
+		VersionInfo v;
+		
+		v = new VersionInfo();
+		v.setQualifier("qualifie-r");
+	}	
 
 	@Test
 	public void testGetSetBuild() {
@@ -335,8 +359,8 @@ public class VersionInfoTest {
 	public void testSetBuild() {
 		VersionInfo v;
 		
-		v = new VersionInfo(1, 1, 1, "qualifier", -1);
-		assertNull(v);	
+		v = new VersionInfo();
+		v.setBuild(-1);	
 	}
 
 	@Test

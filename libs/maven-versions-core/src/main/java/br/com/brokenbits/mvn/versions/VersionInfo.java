@@ -15,7 +15,9 @@ public class VersionInfo {
 	 */
 	public static final String SNAPSHOT = "SNAPSHOT";
 	
-	private static final Pattern QUALIFIER_PATTERN = Pattern.compile("[\\s\\-]+"); 
+	private static final Pattern NUMERIC_PATTERN = Pattern.compile("[0-9]+");
+	
+	private static final Pattern QUALIFIER_PATTERN = Pattern.compile("[^\\-\\s]+"); 
 
 	/**
 	 * The major.
@@ -41,6 +43,14 @@ public class VersionInfo {
 	 * The build.
 	 */
 	private int build;
+	
+	/**
+	 * Creates a new instance of this class. The resulting version will have no qualifier
+	 * and the values of major, minor, revision and build will be set to 0.
+	 */
+	public VersionInfo(){
+		this(0, 0, 0, null, 0);
+	}
 	
 	/**
 	 * Creates a new instance of this class.
@@ -167,16 +177,21 @@ public class VersionInfo {
 
 	/**
 	 * Sets the qualifier. It is important to notice that the qualifier
-	 * must be a non empty string with no blanks and no '-' characters.
+	 * must be a non empty string with at least one letter. This string cannot contain
+	 * '-' 
+	 * 
+	 * no blanks and no '-' characters.
 	 * 
 	 * @param qualifier The qualifier or null if this version has no qualifiers.
 	 */
 	public void setQualifier(String qualifier) {
 		
 		if (qualifier != null) {
-			qualifier = qualifier.trim();
-			if (qualifier.isEmpty()) {
-				qualifier = null;
+			if (NUMERIC_PATTERN.matcher(qualifier).matches()) {
+				throw new IllegalArgumentException(String.format("The qualifier cannot be a numeric value."));
+			}			
+			if (!QUALIFIER_PATTERN.matcher(qualifier).matches()) {
+				throw new IllegalArgumentException(String.format("Invalid qualifier '%1$s'.", qualifier));
 			}
 		}
 		this.qualifier = qualifier;
