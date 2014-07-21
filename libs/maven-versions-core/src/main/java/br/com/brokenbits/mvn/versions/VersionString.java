@@ -1,5 +1,10 @@
 package br.com.brokenbits.mvn.versions;
 
+/**
+ * 
+ * @author fjtc
+ * @since 2014.07.21
+ */
 public class VersionString extends Version {
 
 	private String version;
