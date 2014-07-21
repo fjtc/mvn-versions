@@ -4,9 +4,9 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import br.com.brokenbits.mvn.versions.VersionParser;
+import br.com.brokenbits.mvn.versions.VersionInfoParser;
 
-public class VersionParserTest {
+public class VersionInfoParserTest {
 	
 	private static final String FAILED_VERSIONS[] = {
 		"",
@@ -52,10 +52,10 @@ public class VersionParserTest {
 	
 	@Test
 	public void testParse() {
-		VersionParser p;
+		VersionInfoParser p;
 		VersionInfo v;
 		
-		p = new VersionParser(false);
+		p = new VersionInfoParser(false);
 		
 		v = p.parse("1.2");
 		assertEquals(1, v.getMajor());
@@ -109,10 +109,10 @@ public class VersionParserTest {
 	
 	@Test
 	public void testParseFailed() {
-		VersionParser p;
+		VersionInfoParser p;
 		VersionInfo v;
 		
-		p = new VersionParser(false);
+		p = new VersionInfoParser(false);
 		for (String s: FAILED_VERSIONS) {
 			try {
 				v = p.parse(s);
@@ -124,10 +124,10 @@ public class VersionParserTest {
 
 	@Test
 	public void testParseStrict() {
-		VersionParser p;
+		VersionInfoParser p;
 		VersionInfo v;
 		
-		p = new VersionParser(true);
+		p = new VersionInfoParser(true);
 		
 		v = p.parse("1.2");
 		assertEquals(1, v.getMajor());
@@ -174,10 +174,10 @@ public class VersionParserTest {
 	
 	@Test
 	public void testParseStrictFailed() {
-		VersionParser p;
+		VersionInfoParser p;
 		VersionInfo v;
 		
-		p = new VersionParser(true);
+		p = new VersionInfoParser(true);
 		for (String s: FAILED_STRICT_VERSIONS) {
 			try {
 				v = p.parse(s);

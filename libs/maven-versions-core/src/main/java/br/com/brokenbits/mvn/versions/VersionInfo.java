@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
  * @author fjtc
  * @since 2014.07.15
  */
-public class VersionInfo {
+public class VersionInfo extends Version {
 	
 	/**
 	 * This is the special qualifier that defines a SNAPSHOT.
@@ -217,6 +217,36 @@ public class VersionInfo {
 		}
 		this.build = build;
 	}
+	
+	/**
+	 * Compares this version with another. If v is an instance of VersionInfo, 
+	 * the comparison follows the following criteria:
+	 * 
+	 *   - Compare majors, the greater one is newer;
+	 *   - Compare minors, the greater one is newer;
+	 *   - Compare revisions, the greater one is newer;
+	 *   - Compare the qualifiers. The newer version is defined according to those rules:
+	 *     - No qualifier;
+	 *     - SNAPSHOT;
+	 *     - Lexicographic comparison;
+	 *   - Compare build, the greater one is newer;
+	 *   
+	 * <p>If v is not an instance of VersionInfo, the comparison is made by using 
+	 * the lexicographic comparison of the two string representations.
+	 * 
+	 * @param v The other version.
+	 * @return 0 if the versions are the same, a positive value if this version is 
+	 * newer or a negative value if this version is older.
+	 */	
+	@Override
+	public int compareTo(Version v) {
+		
+		if (v instanceof VersionInfo) {
+			return compareToCore((VersionInfo)v); 
+		} else {
+			return super.compareTo(v);
+		}
+	}
 
 	/**
 	 * Compares this version with another. The comparison follows the following criteria:
@@ -234,7 +264,7 @@ public class VersionInfo {
 	 * @return 0 if the versions are the same, a positive value if this version is 
 	 * newer or a negative value if this version is older.
 	 */
-	public int compareTo(VersionInfo v) {
+	private int compareToCore(VersionInfo v) {
 		int delta;
 		
 		// Compare major

@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  * @author FJTC
  * @since 2014.07.21
  */
-public class VersionParser {
+public class VersionInfoParser {
 	
 	/**
 	 * A pattern designed to accept versions with the format "x.y[.z[.b]]".
@@ -40,7 +40,7 @@ public class VersionParser {
 	 * 
 	 * @param strict If true, creates a strict parser. Otherwise, creates a lazy one.
 	 */
-	public VersionParser(boolean strict) {
+	public VersionInfoParser(boolean strict) {
 		this.strict = strict;
 	}
 	

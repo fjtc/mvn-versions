@@ -367,6 +367,7 @@ public class VersionInfoTest {
 	public void testCompareTo() {
 		VersionInfo v1;
 		VersionInfo v2;
+		VersionString v3;
 		
 		// Equal
 		v1 = new VersionInfo(1, 2, 3, null, 4);
@@ -485,7 +486,20 @@ public class VersionInfoTest {
 
 		v1 = new VersionInfo(1, 2, 3, "SNAPSHOT", 4);
 		v2 = new VersionInfo(1, 2, 3, "Z", 4);
-		assertTrue(v1.compareTo(v2) > 0);			
+		assertTrue(v1.compareTo(v2) > 0);
+		
+		// VersionString
+		v1 = new VersionInfo(1, 2, 3, "SNAPSHOT", 4);
+		v3 = new VersionString("1.2.3-SNAPSHOT-004");
+		assertTrue(v1.compareTo(v3) == 0);
+		
+		v1 = new VersionInfo(1, 2, 3, "SNAPSHOT", 4);
+		v3 = new VersionString("1.2.3.4.5");
+		assertTrue(v1.compareTo(v3) < 0);
+		
+		v1 = new VersionInfo(1, 2, 3, null, 0);
+		v3 = new VersionString("1.2.2");
+		assertTrue(v1.compareTo(v3) > 0);
 	}
 
 	@Test
