@@ -5,9 +5,9 @@ import java.util.regex.Pattern;
 
 /**
  * This class implements a maven version parser. This parser can operate in 2 modes,
- * the strict mode and lazy mode.
+ * the strict mode and non-strict mode.
  * 
- * <p>On strict mode, only versions in the form "x.y[.z][-qualifier][-b]". On lazy mode,
+ * <p>On strict mode, only versions in the form "x.y[.z][-qualifier][-b]". On non-strict mode,
  * only versions in the form "x.y[.z[.b]]" are accepted. 
  * 
  * @author FJTC
@@ -31,14 +31,14 @@ public class VersionInfoParser {
 	private static final Pattern QUALIFIER_BUILD_PATTERN = Pattern.compile("^([^\\-]+)?(?:\\-([0-9]+))?$");
 	
 	/**
-	 * A flag that indicates if this parser is strict or lazy.
+	 * A flag that indicates if this parser is strict or non-strict.
 	 */
 	private boolean strict;	
 	
 	/**
 	 * Creates a new instance of this class.
 	 * 
-	 * @param strict If true, creates a strict parser. Otherwise, creates a lazy one.
+	 * @param strict If true, creates a strict parser. Otherwise, creates a non-strict one.
 	 */
 	public VersionInfoParser(boolean strict) {
 		this.strict = strict;
