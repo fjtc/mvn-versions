@@ -24,9 +24,16 @@ public class POMFile {
 	
 	private Document dom;
 	
+	public POMFile(String file) throws IOException {
+		this(new File(file));
+	}
 	
 	public POMFile(File f) throws IOException {
 		loadFromFile(f);
+	}
+	
+	public File getFile(){
+		return this.file;
 	}
 
 	private void loadFromFile(File f) throws IOException {
