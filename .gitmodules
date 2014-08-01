@@ -1,0 +1,3 @@
+[submodule "deps/jopts"]
+	path = deps/jopts
+	url = git@github.com:fjtc/jopts.git
