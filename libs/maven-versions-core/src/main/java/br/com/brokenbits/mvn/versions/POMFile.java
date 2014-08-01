@@ -16,6 +16,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 public class POMFile {
@@ -90,7 +91,15 @@ public class POMFile {
 	}
 
 	private void validatePOM() throws IOException {
+		Element root;
 		
+		root = dom.getDocumentElement();
+		if ((root.getNamespaceURI() != null) && (!root.getNamespaceURI().equals("http://maven.apache.org/POM/4.0.0"))) {
+			throw new InvalidPOMException(String.format("Invalid POM namespace %1$s.", root.getNamespaceURI()));
+		}
+		if (!root.getNodeName().equals("project")) {
+			throw new InvalidPOMException("Invalid POM document root.");
+		}
 	}
 	
 	
@@ -99,7 +108,8 @@ public class POMFile {
 		DocumentBuilder documentBuilder;
 		
 		documentBuilderFactory = DocumentBuilderFactory.newInstance();
-		documentBuilderFactory .setValidating(false); // Disable validation in order		
+		documentBuilderFactory.setValidating(false); // Disable validation in order to skip the schema validation
+		documentBuilderFactory.setNamespaceAware(true);
 		documentBuilder = documentBuilderFactory.newDocumentBuilder();
 		
 		return documentBuilder.parse(f);
