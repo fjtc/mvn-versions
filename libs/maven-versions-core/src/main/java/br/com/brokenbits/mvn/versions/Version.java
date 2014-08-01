@@ -6,7 +6,7 @@ package br.com.brokenbits.mvn.versions;
  * @author fjtc
  * @since 2014.07.21
  */
-public class Version {
+public class Version implements Comparable<Version> {
 	
 	/**
 	 * Compares two versions. The default implementation performs a lexicographic
@@ -18,5 +18,17 @@ public class Version {
 	 */
 	public int compareTo(Version v) {
 		return this.toString().compareToIgnoreCase(v.toString());
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof Version)) {
+			return false;
+		}
+		return this.toString().equals(obj.toString());
 	}
 }
