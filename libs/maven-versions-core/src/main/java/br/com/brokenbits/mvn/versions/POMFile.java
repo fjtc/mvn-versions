@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -17,7 +20,11 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import br.com.brokenbits.mvn.versions.util.DOMUtil;
 
 public class POMFile {
 
@@ -114,4 +121,75 @@ public class POMFile {
 		
 		return documentBuilder.parse(f);
 	}
+
+	public Artifact getArtifact() throws InvalidPOMException {
+		try {
+			return new Artifact(dom.getDocumentElement());
+		} catch (IllegalArgumentException e) {
+			throw new InvalidPOMException("Unable to get the artifact information.", e);
+		}
+	}
+	
+	public void setVersion(Version v) throws InvalidPOMException {
+		
+		setVersion(dom.getDocumentElement(), v);
+	}
+	
+	private void setVersion(Node root, Version v) throws InvalidPOMException {
+		Node n;
+		
+		n = DOMUtil.getFirstNodeByName(root, "version");
+		if (n == null) {
+			n = dom.createElement("version");
+			dom.appendChild(n);
+		}
+		n.setTextContent(v.toString());		
+	}	
+	
+	public List<Artifact> listDependencies() throws InvalidPOMException {
+		Node depsNode;
+		NodeList nodeList;
+		ArrayList<Artifact> list = new ArrayList<Artifact>(); 
+		
+		depsNode = DOMUtil.getFirstNodeByName(dom.getDocumentElement(), "dependencies");
+		if (depsNode != null) {
+			nodeList = depsNode.getChildNodes();
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				Node depNode = nodeList.item(i);
+				if (depNode.getNodeName().equals("dependency")) {
+					try {
+						list.add(new Artifact(depNode));
+					} catch (IllegalArgumentException e) {
+						throw new InvalidPOMException("Invalid dependency list.", e);
+					}
+				}
+			}
+		}
+		return list;
+	}
+	
+	public void updateDependencies(Map<String, Artifact> depMap) throws InvalidPOMException {
+		Node depsNode;
+		NodeList nodeList;
+		
+		depsNode = DOMUtil.getFirstNodeByName(dom.getDocumentElement(), "dependencies");
+		if (depsNode != null) {
+			nodeList = depsNode.getChildNodes();
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				Node depNode = nodeList.item(i);
+				if (depNode.getNodeName().equals("dependency")) {
+					Artifact dep;
+					try {
+						dep = new Artifact(depNode);
+					} catch (IllegalArgumentException e) {
+						throw new InvalidPOMException("Invalid dependency list.", e);
+					}
+					Artifact newDep = depMap.get(dep.getGroupArtifact());
+					if (newDep != null) {
+						setVersion(depNode, newDep.getVersion());
+					}
+				}
+			}
+		}
+	}	
 }
