@@ -160,7 +160,7 @@ public class Options {
 			if (h.getName() != null) {
 				out.print(h.getName());
 				if (h.getType() != ArgumentParameterType.NONE) {
-					out.print(" <n>: ");
+					out.print(" <n>");
 				}
 				out.print(": ");
 				out.print(h.getDescription());
