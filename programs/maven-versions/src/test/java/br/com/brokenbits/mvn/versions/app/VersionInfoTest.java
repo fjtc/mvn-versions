@@ -13,4 +13,12 @@ public class VersionInfoTest {
 		v = VersionInfo.getVersion();
 		assertNotNull(v);
 	}
+	
+	@Test
+	public void testGetFinalName() {
+		String v;
+		
+		v = VersionInfo.getFinalName();
+		assertNotNull(v);
+	}	
 }
