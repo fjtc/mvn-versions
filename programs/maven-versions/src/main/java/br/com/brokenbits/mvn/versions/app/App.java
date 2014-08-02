@@ -4,10 +4,14 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 
 import br.com.brokenbits.jopts.ArgumentParserException;
+import br.com.brokenbits.mvn.versions.Artifact;
 import br.com.brokenbits.mvn.versions.POMFile;
+import br.com.brokenbits.mvn.versions.Version;
+import br.com.brokenbits.mvn.versions.util.FileUtils;
 
 public class App {
 	
@@ -15,6 +19,7 @@ public class App {
 	public static final int RET_HELP = 1;
 	public static final int RET_WRONG_ARGUMENTS = 2;
 	public static final int RET_UNABLE_TO_LOAD_POM = 3;
+	public static final int RET_FAIL = 4;
 	
 	private Options opts;
 
@@ -76,6 +81,96 @@ public class App {
 		return RET_SUCCESS;
 	}
 	
+	private int updateDependencies() {
+		HashMap<String, Artifact> depMap = new HashMap<String, Artifact>();
+		
+		// Scan all files in order to create the current version map
+		for (POMFile pom: pomFiles) {
+			try {
+				Artifact a = pom.getArtifact();
+				depMap.put(a.getGroupArtifact(), a);
+			} catch (Exception e) {
+				System.err.printf("Unable to get the artifact data from '%1$s'.\n", pom.getFile().getAbsolutePath());
+				return RET_FAIL;
+			}
+		}
+		
+		// Update the files
+		for (POMFile pom: pomFiles) {
+			try {
+				pom.updateDependencies(depMap);
+			} catch (Exception e) {
+				System.err.printf("Unable to update the map for '%1$s'.\n", pom.getFile().getAbsolutePath());
+				return RET_FAIL;
+			}
+		}
+		
+		return RET_SUCCESS;		
+	}
+	
+	private int updateVersions() {
+
+		// Scan all files in order to create the current version map
+		for (POMFile pom: pomFiles) {
+			try {
+				Version v = pom.getArtifact().getVersion();
+				if (v instanceof br.com.brokenbits.mvn.versions.VersionInfo) {
+					br.com.brokenbits.mvn.versions.VersionInfo vf = (br.com.brokenbits.mvn.versions.VersionInfo)v;
+					
+					// Version number
+					switch (opts.getUpdatePart()) {
+					case BUILD:
+						vf.updateBuild(opts.getInc());
+						break;
+					case REVISION:
+						vf.updateRevision(opts.getInc());
+						break;
+					case MINOR:
+						vf.updateMinor(opts.getInc());
+						break;
+					case MAJOR:
+						vf.updateMajor(opts.getInc());
+						break;
+					default:
+						break;
+					}
+					
+					// Qualifier
+					if (opts.removeQualifier()) {
+						vf.setQualifier(null);
+					} else {
+						if (opts.getQualifier() != null) {
+							vf.setQualifier(opts.getQualifier());
+						}
+					}
+					
+					pom.setVersion(vf);
+				} else {
+					System.out.printf("Cannot update the qualifier of the file '%1$s'\n", pom.getFile().getAbsolutePath());
+				}
+			} catch (Exception e) {
+				System.err.printf("Unable to save the file '%1$s'.\n", pom.getFile().getAbsolutePath());
+				return RET_FAIL;
+			}
+		}
+		return RET_SUCCESS;		
+	}
+		
+	private int saveAll() {
+		
+		// Scan all files in order to create the current version map
+		for (POMFile pom: pomFiles) {
+			try {
+				FileUtils.copy(pom.getFile(), new File(pom.getFile().getAbsolutePath() + ".old"));
+				pom.save();
+			} catch (Exception e) {
+				System.err.printf("Unable to save the file '%1$s'.\n", pom.getFile().getAbsolutePath());
+				return RET_FAIL;
+			}
+		}
+		return RET_SUCCESS;		
+	}
+	
 	public int run(String[] args) throws Exception {
 		int retval;
 		
@@ -96,10 +191,23 @@ public class App {
 			return retval;
 		}
 		
+		// Update version
+		retval = updateVersions();
+		if (retval != RET_SUCCESS) {
+			return retval;
+		}
+
+		// Update the dependencies
+		retval = updateDependencies();
+		if (retval != RET_SUCCESS) {
+			return retval;
+		}
 		
-		
-		
-		
+		// Save all
+		retval = saveAll();
+		if (retval != RET_SUCCESS) {
+			return retval;
+		}
 		
 		return RET_SUCCESS;		
 	}
