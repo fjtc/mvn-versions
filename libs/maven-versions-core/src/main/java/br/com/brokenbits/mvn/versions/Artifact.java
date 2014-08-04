@@ -33,10 +33,9 @@ public class Artifact {
 
 		// Version
 		node = DOMUtil.getFirstNodeByName(root, "version");
-		if (node == null) {
-			throw new IllegalArgumentException("version not found.");
+		if (node != null) {
+			this.version = VersionParser.parse(node.getTextContent(), false);
 		}
-		this.version = VersionParser.parse(node.getTextContent(), false);
 	}
 	
 	public String getGroupID() {
