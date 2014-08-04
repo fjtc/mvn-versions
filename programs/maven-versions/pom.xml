@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.brokenbits.mvn.versions</groupId>
 	<artifactId>maven-versions</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 
 	<build>
 		<finalName>maven-versions</finalName>
@@ -112,7 +112,7 @@
 		<dependency>
 			<groupId>br.com.brokenbits.mvn.versions</groupId>
 			<artifactId>maven-versions-core</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>br.com.brokenbits</groupId>

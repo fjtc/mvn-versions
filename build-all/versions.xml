@@ -1,0 +1,19 @@
+<project name="versions" default="help">
+
+	<target name="help">
+	
+	</target>
+
+	<target name="setRelease">
+		<exec executable="java" dir="tools">
+			<arg value="-jar"/>
+			<arg value="maven-versions.jar"/>
+			<arg value="-release" />
+			<arg value="-ro" />
+			<arg value="../../deps/jopts/libs/jopts/pom.xml" />
+			<arg value="--" />
+			<arg value="../../programs/maven-versions/pom.xml" />
+			<arg value="../../libs/maven-versions-core/pom.xml" />
+		</exec>
+	</target>
+</project>

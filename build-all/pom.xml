@@ -11,5 +11,8 @@
 		
 		<!-- Libraries -->
 		<module>../libs/maven-versions-core</module>
+		
+		<!-- Program -->
+		<module>../programs/maven-versions</module>
 	</modules>
 </project>
