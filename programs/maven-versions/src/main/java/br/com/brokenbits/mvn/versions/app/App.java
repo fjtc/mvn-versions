@@ -15,6 +15,8 @@ import br.com.brokenbits.mvn.versions.util.FileUtils;
 
 public class App {
 	
+	private static final String POM_PROP_RO = "RO";
+	
 	public static final int RET_SUCCESS = 0;
 	public static final int RET_HELP = 1;
 	public static final int RET_WRONG_ARGUMENTS = 2;
@@ -62,6 +64,7 @@ public class App {
 	}
 	
 	private int loadPOMFiles() {
+		File file;
 		
 		// 
 		if (opts.getFileList().size() == 0) {
@@ -70,14 +73,29 @@ public class App {
 		}
 
 		for (String f: opts.getFileList()) {
+			file = new File(FileUtils.fixPathSeparator(f)); 
 			try {
-				POMFile pom = new POMFile(new File(f));
+				
+				POMFile pom = new POMFile(file);
 				pomFiles.add(pom);
 			} catch (Exception e) {
-				System.err.printf("Unable to load the POM file %1$s.", f);
+				System.err.printf("Unable to load the POM file %1$s.", file.getAbsolutePath());
 				return RET_UNABLE_TO_LOAD_POM;
 			}
 		}
+		
+		for (String f: opts.getROFileList()) {
+			file = new File(FileUtils.fixPathSeparator(f)); 
+			try {
+				POMFile pom = new POMFile(file);
+				pom.setProperty(POM_PROP_RO, Boolean.TRUE);
+				pomFiles.add(pom);
+			} catch (Exception e) {
+				System.err.printf("Unable to load the POM file %1$s.", file.getAbsolutePath());
+				return RET_UNABLE_TO_LOAD_POM;
+			}
+		}
+		
 		return RET_SUCCESS;
 	}
 	
@@ -98,7 +116,9 @@ public class App {
 		// Update the files
 		for (POMFile pom: pomFiles) {
 			try {
-				pom.updateDependencies(depMap);
+				if (pom.getProperty(POM_PROP_RO) == null) {
+					pom.updateDependencies(depMap);
+				}
 			} catch (Exception e) {
 				System.err.printf("Unable to update the map for '%1$s'.\n", pom.getFile().getAbsolutePath());
 				return RET_FAIL;
@@ -112,45 +132,47 @@ public class App {
 
 		// Scan all files in order to create the current version map
 		for (POMFile pom: pomFiles) {
-			try {
-				Version v = pom.getArtifact().getVersion();
-				if (v instanceof br.com.brokenbits.mvn.versions.VersionInfo) {
-					br.com.brokenbits.mvn.versions.VersionInfo vf = (br.com.brokenbits.mvn.versions.VersionInfo)v;
-					
-					// Version number
-					switch (opts.getUpdatePart()) {
-					case BUILD:
-						vf.updateBuild(opts.getInc());
-						break;
-					case REVISION:
-						vf.updateRevision(opts.getInc());
-						break;
-					case MINOR:
-						vf.updateMinor(opts.getInc());
-						break;
-					case MAJOR:
-						vf.updateMajor(opts.getInc());
-						break;
-					default:
-						break;
-					}
-					
-					// Qualifier
-					if (opts.removeQualifier()) {
-						vf.setQualifier(null);
-					} else {
-						if (opts.getQualifier() != null) {
-							vf.setQualifier(opts.getQualifier());
+			if (pom.getProperty(POM_PROP_RO) == null) {
+				try {
+					Version v = pom.getArtifact().getVersion();
+					if (v instanceof br.com.brokenbits.mvn.versions.VersionInfo) {
+						br.com.brokenbits.mvn.versions.VersionInfo vf = (br.com.brokenbits.mvn.versions.VersionInfo)v;
+						
+						// Version number
+						switch (opts.getUpdatePart()) {
+						case BUILD:
+							vf.updateBuild(opts.getInc());
+							break;
+						case REVISION:
+							vf.updateRevision(opts.getInc());
+							break;
+						case MINOR:
+							vf.updateMinor(opts.getInc());
+							break;
+						case MAJOR:
+							vf.updateMajor(opts.getInc());
+							break;
+						default:
+							break;
 						}
+						
+						// Qualifier
+						if (opts.removeQualifier()) {
+							vf.setQualifier(null);
+						} else {
+							if (opts.getQualifier() != null) {
+								vf.setQualifier(opts.getQualifier());
+							}
+						}
+						
+						pom.setVersion(vf);
+					} else {
+						System.out.printf("Cannot update the qualifier of the file '%1$s'\n", pom.getFile().getAbsolutePath());
 					}
-					
-					pom.setVersion(vf);
-				} else {
-					System.out.printf("Cannot update the qualifier of the file '%1$s'\n", pom.getFile().getAbsolutePath());
+				} catch (Exception e) {
+					System.err.printf("Unable to save the file '%1$s'.\n", pom.getFile().getAbsolutePath());
+					return RET_FAIL;
 				}
-			} catch (Exception e) {
-				System.err.printf("Unable to save the file '%1$s'.\n", pom.getFile().getAbsolutePath());
-				return RET_FAIL;
 			}
 		}
 		return RET_SUCCESS;		
@@ -160,12 +182,14 @@ public class App {
 		
 		// Scan all files in order to create the current version map
 		for (POMFile pom: pomFiles) {
-			try {
-				FileUtils.copy(pom.getFile(), new File(pom.getFile().getAbsolutePath() + ".old"));
-				pom.save();
-			} catch (Exception e) {
-				System.err.printf("Unable to save the file '%1$s'.\n", pom.getFile().getAbsolutePath());
-				return RET_FAIL;
+			if (pom.getProperty(POM_PROP_RO) == null) {
+				try {
+					FileUtils.copy(pom.getFile(), new File(pom.getFile().getAbsolutePath() + ".old"));
+					pom.save();
+				} catch (Exception e) {
+					System.err.printf("Unable to save the file '%1$s'.\n", pom.getFile().getAbsolutePath());
+					return RET_FAIL;
+				}
 			}
 		}
 		return RET_SUCCESS;		

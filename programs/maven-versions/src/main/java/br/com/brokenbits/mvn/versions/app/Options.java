@@ -18,6 +18,8 @@ public class Options {
 
 	private ArrayList<String> fileList = new ArrayList<String>();
 	
+	private ArrayList<String> roFileList = new ArrayList<String>();
+	
 	private String qualifier;
 	
 	private boolean removeQualifier = false;
@@ -32,6 +34,11 @@ public class Options {
 	public void addFile(String file) {
 		fileList.add(file);
 	}
+	
+	@Argument(name="-ro", description="Read-only POM file. Can be used more than once.")
+	public void addROFile(String file) {
+		roFileList.add(file);
+	}	
 	
 	@Arguments(arguments={
 			@Argument(name="-h", description="Show help."),
@@ -102,6 +109,10 @@ public class Options {
 
 	public List<String> getFileList() {
 		return fileList;
+	}
+	
+	public List<String> getROFileList() {
+		return roFileList;
 	}
 
 	public String getQualifier() {

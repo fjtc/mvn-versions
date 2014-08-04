@@ -47,6 +47,8 @@ public class AppTest {
 		a = new App();
 		assertEquals(App.RET_SUCCESS, a.run(new String[]{
 				"-snapshot",
+				"-ro",
+				(new File(TMP_DIR, "pom-ro.xml")).getPath(),
 				"-minor",
 				(new File(TMP_DIR, "pom1.xml")).getPath(),
 				(new File(TMP_DIR, "pom2.xml")).getPath(),

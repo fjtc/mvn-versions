@@ -28,4 +28,25 @@ public class FileUtils {
 			in.close();
 		}
 	}
+	
+	/**
+	 * Converts the the path separator from '\' to '/' or vice-versa according to
+	 * the current platform. 
+	 * 
+	 * @param path The path to be converted.
+	 * @return The path converted to the correct platform path separator.
+	 */
+	public static final String fixPathSeparator(String path) {
+		char oldSep;
+		char newSep;
+		
+		if (File.pathSeparatorChar == '\\') {
+			oldSep = '/';
+			newSep = '\\';
+		} else {
+			oldSep = '\\';
+			newSep = '/';
+		}
+		return path.replace(oldSep, newSep);
+	}
 }
