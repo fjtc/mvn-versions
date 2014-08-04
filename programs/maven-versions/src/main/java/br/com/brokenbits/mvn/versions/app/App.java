@@ -109,6 +109,7 @@ public class App {
 				depMap.put(a.getGroupArtifact(), a);
 			} catch (Exception e) {
 				System.err.printf("Unable to get the artifact data from '%1$s'.\n", pom.getFile().getAbsolutePath());
+				e.printStackTrace(System.err);
 				return RET_FAIL;
 			}
 		}
@@ -121,6 +122,7 @@ public class App {
 				}
 			} catch (Exception e) {
 				System.err.printf("Unable to update the map for '%1$s'.\n", pom.getFile().getAbsolutePath());
+				e.printStackTrace(System.err);
 				return RET_FAIL;
 			}
 		}
@@ -170,7 +172,8 @@ public class App {
 						System.out.printf("Cannot update the qualifier of the file '%1$s'\n", pom.getFile().getAbsolutePath());
 					}
 				} catch (Exception e) {
-					System.err.printf("Unable to save the file '%1$s'.\n", pom.getFile().getAbsolutePath());
+					System.err.printf("Unable to update the version of the file '%1$s'.\n", pom.getFile().getAbsolutePath());
+					e.printStackTrace(System.err);
 					return RET_FAIL;
 				}
 			}
@@ -188,6 +191,7 @@ public class App {
 					pom.save();
 				} catch (Exception e) {
 					System.err.printf("Unable to save the file '%1$s'.\n", pom.getFile().getAbsolutePath());
+					e.printStackTrace(System.err);
 					return RET_FAIL;
 				}
 			}
