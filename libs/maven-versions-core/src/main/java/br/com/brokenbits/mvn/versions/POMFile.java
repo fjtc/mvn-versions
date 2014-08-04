@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +32,8 @@ public class POMFile {
 	private File file;
 	
 	private Document dom;
+	
+	private HashMap<String, Object> properties = new HashMap<String, Object>();
 	
 	public POMFile(String file) throws IOException {
 		this(new File(file));
@@ -191,5 +194,13 @@ public class POMFile {
 				}
 			}
 		}
-	}	
+	}
+	
+	public Object getProperty(String name) {
+		return this.properties.get(name);
+	}
+	
+	public void setProperty(String name, Object value) {
+		this.properties.put(name, value);
+	}
 }
